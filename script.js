@@ -7,55 +7,150 @@ const emailJSConfig = {
 
 // Initialize EmailJS
 function initEmailJS() {
-    emailjs.init(emailJSConfig.publicKey);
-    console.log('EmailJS initialized successfully!');
+    if (typeof emailjs !== 'undefined') {
+        emailjs.init(emailJSConfig.publicKey);
+        console.log('EmailJS initialized successfully!');
+    } else {
+        console.warn('EmailJS library not loaded');
+    }
 }
 
-// Website functionality
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize EmailJS
-    initEmailJS();
+// Reset submit button
+function resetSubmitButton() {
+    const submitBtn = document.getElementById('submitBtn');
+    if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Send Message';
+    }
+}
+
+// Show message function
+function showMessage(type, text) {
+    const messageDiv = document.getElementById('messageDiv');
+    if (messageDiv) {
+        messageDiv.className = `message ${type}`;
+        messageDiv.textContent = text;
+        messageDiv.style.display = 'block';
+        
+        // Hide message after 5 seconds
+        setTimeout(() => {
+            messageDiv.style.display = 'none';
+        }, 5000);
+    }
+}
+
+// Email validation
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+// Initialize mobile menu functionality
+function initMobileMenu() {
+    const mobileMenu = document.getElementById('mobile-menu');
+    const navMenu = document.getElementById('nav-menu');
+    const navLinks = document.querySelectorAll('.nav-link');
+
+    // Check if elements exist before adding event listeners
+    if (mobileMenu && navMenu) {
+        // Toggle mobile menu
+        mobileMenu.addEventListener('click', function() {
+            mobileMenu.classList.toggle('active');
+            navMenu.classList.toggle('active');
+        });
+
+        // Close menu when clicking on navigation links
+        navLinks.forEach(function(link) {
+            link.addEventListener('click', function() {
+                mobileMenu.classList.remove('active');
+                navMenu.classList.remove('active');
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!mobileMenu.contains(e.target) && !navMenu.contains(e.target)) {
+                mobileMenu.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+        });
+
+        // Close menu on window resize to desktop view
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768) {
+                mobileMenu.classList.remove('active');
+                navMenu.classList.remove('active');
+            }
+        });
+    } else {
+        console.warn('Mobile menu elements not found');
+    }
+}
+
+// Initialize smooth scrolling
+function initSmoothScrolling() {
+    const links = document.querySelectorAll('a[href^="#"]');
     
-    // Smooth scrolling for navigation links
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
+    links.forEach(function(anchor) {
+        anchor.addEventListener('click', function(e) {
             e.preventDefault();
-            const target = document.querySelector(this.getAttribute('href'));
-            if (target) {
-                target.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'start'
+            
+            const targetId = this.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+                const navHeight = document.querySelector('nav') ? document.querySelector('nav').offsetHeight : 0;
+                const offsetTop = targetElement.offsetTop - navHeight;
+                
+                window.scrollTo({
+                    top: offsetTop,
+                    behavior: 'smooth'
                 });
             }
         });
     });
+}
 
-    // Navbar background on scroll
-    window.addEventListener('scroll', () => {
-        const nav = document.querySelector('nav');
-        if (window.scrollY > 100) {
-            nav.style.background = 'rgba(10, 10, 10, 0.95)';
-        } else {
-            nav.style.background = 'rgba(10, 10, 10, 0.9)';
-        }
-    });
+// Initialize navbar scroll effect
+function initNavbarScrollEffect() {
+    const nav = document.querySelector('nav');
+    
+    if (nav) {
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 100) {
+                nav.style.background = 'rgba(10, 10, 10, 0.95)';
+            } else {
+                nav.style.background = 'rgba(10, 10, 10, 0.9)';
+            }
+        });
+    }
+}
 
-    // Add random movement to particles
-    document.querySelectorAll('.particle').forEach(particle => {
+// Initialize particles animation
+function initParticles() {
+    const particles = document.querySelectorAll('.particle');
+    
+    particles.forEach(function(particle) {
+        // Randomize particle properties
         particle.style.left = Math.random() * 100 + '%';
         particle.style.animationDelay = Math.random() * 20 + 's';
         particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
     });
+}
 
-    // Handle contact form submission
+// Initialize contact form
+function initContactForm() {
     const form = document.getElementById('contactForm');
+    
     if (form) {
         form.addEventListener('submit', function(e) {
             e.preventDefault();
             
             const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.textContent = 'Sending...';
+            if (submitBtn) {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Sending...';
+            }
 
             // Get form data
             const formData = new FormData(this);
@@ -81,6 +176,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
+            // Check if EmailJS is available
+            if (typeof emailjs === 'undefined') {
+                showMessage('error', '❌ Email service not available. Please try again later.');
+                resetSubmitButton();
+                return;
+            }
+
             // Send email using EmailJS
             emailjs.send(
                 emailJSConfig.serviceId,
@@ -101,32 +203,72 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     }
+}
+
+// Initialize all functionality when DOM is loaded
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing website functionality...');
+    
+    // Initialize EmailJS
+    initEmailJS();
+    
+    // Initialize all components with error handling
+    try {
+        initSmoothScrolling();
+        console.log('Smooth scrolling initialized');
+    } catch (error) {
+        console.error('Error initializing smooth scrolling:', error);
+    }
+    
+    try {
+        initNavbarScrollEffect();
+        console.log('Navbar scroll effect initialized');
+    } catch (error) {
+        console.error('Error initializing navbar scroll effect:', error);
+    }
+    
+    try {
+        initMobileMenu();
+        console.log('Mobile menu initialized');
+    } catch (error) {
+        console.error('Error initializing mobile menu:', error);
+    }
+    
+    try {
+        initParticles();
+        console.log('Particles initialized');
+    } catch (error) {
+        console.error('Error initializing particles:', error);
+    }
+    
+    try {
+        initContactForm();
+        console.log('Contact form initialized');
+    } catch (error) {
+        console.error('Error initializing contact form:', error);
+    }
+    
+    console.log('Website initialization complete!');
 });
 
-// Reset submit button
-function resetSubmitButton() {
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = false;
-    submitBtn.textContent = 'Send Message';
-}
-
-// Show message function
-function showMessage(type, text) {
-    const messageDiv = document.getElementById('messageDiv');
-    if (messageDiv) {
-        messageDiv.className = `message ${type}`;
-        messageDiv.textContent = text;
-        messageDiv.style.display = 'block';
-        
-        // Hide message after 5 seconds
-        setTimeout(() => {
-            messageDiv.style.display = 'none';
-        }, 5000);
+// Handle page visibility changes
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') {
+        console.log('Page is visible');
     }
-}
+});
 
-// Email validation
-function isValidEmail(email) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return emailRegex.test(email);
-}
+// Handle window load event
+window.addEventListener('load', function() {
+    console.log('All resources loaded');
+});
+
+// Handle errors
+window.addEventListener('error', function(e) {
+    console.error('JavaScript error:', e.error);
+});
+
+// Handle unhandled promise rejections
+window.addEventListener('unhandledrejection', function(e) {
+    console.error('Unhandled promise rejection:', e.reason);
+});

@@ -26,6 +26,57 @@
             transition: all 0.3s ease;
         }
 
+        .nav-toggle {
+        display: none;
+        flex-direction: column;
+        cursor: pointer;
+        }
+
+        .bar {
+        width: 25px;
+        height: 3px;
+        background: #00ffff;
+        margin: 3px 0;
+        transition: 0.3s;
+        }
+
+        @media screen and (max-width: 768px) {
+  /* Show hamburger menu */
+  .nav-toggle {
+    display: flex;
+  }
+  
+  /* Hide desktop menu */
+  .nav-links {
+    position: fixed;
+    left: -100%;
+    top: 70px;
+    flex-direction: column;
+    background-color: rgba(0, 0, 0, 0.95);
+    width: 100%;
+    text-align: center;
+    transition: 0.3s;
+  }
+  
+  .nav-links.active {
+        left: 0;
+  }
+  .nav-links li {
+        margin: 1rem 0;
+    }
+    
+    .nav-links a {
+        font-size: 1.2rem;
+    }
+  .nav-item {
+    margin: 1rem 0;
+  }
+  
+  .nav-link {
+    font-size: 1.2rem;
+  }
+}
+
         .nav-container {
             display: flex;
             justify-content: space-between;
