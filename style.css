@@ -285,6 +285,22 @@ nav {
         padding: 3rem 0.8rem;
     }
     
+    /* Enhanced mobile about section */
+    .about-text {
+        font-size: 1rem;
+        line-height: 1.7;
+        padding: 0 1rem;
+    }
+    
+    .about-image {
+        width: 70%;
+        max-width: 280px;
+    }
+    
+    .about-image img {
+        height: 350px;
+    }
+    
     .rect-button {
         width: 90%;
         padding: 15px 20px;
