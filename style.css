@@ -45,8 +45,8 @@ nav {
 
 @media screen and (max-width: 480px) {
     nav {
-        padding: 0.6rem 0.8rem;
-        width: 100%;
+        padding: 0.4rem 0.3rem;
+        width: 95%;
         margin: 0;
     }
 }
@@ -67,7 +67,7 @@ nav {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    order: 1;
+    order: 2;
 }
 
 .nav-links {
@@ -110,7 +110,7 @@ nav {
     cursor: pointer;
     z-index: 1001;
     padding: 10px;
-    order: 2;
+    order: 1;
 }
 
 .bar {
@@ -563,6 +563,7 @@ nav {
     padding: 4rem 1rem;
     background: rgba(255, 255, 255, 0.02);
     backdrop-filter: blur(10px);
+    align-items: center;
 }
 
 .contact-container {
