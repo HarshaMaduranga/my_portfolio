@@ -45,7 +45,7 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
-// Initialize mobile menu functionality
+// Initialize mobile menu functionality - FIXED VERSION
 function initMobileMenu() {
     const mobileMenu = document.getElementById('mobile-menu');
     const navMenu = document.getElementById('nav-menu');
@@ -53,37 +53,63 @@ function initMobileMenu() {
 
     // Check if elements exist before adding event listeners
     if (mobileMenu && navMenu) {
-        // Toggle mobile menu
-        mobileMenu.addEventListener('click', function() {
-            mobileMenu.classList.toggle('active');
+        console.log('Mobile menu elements found, initializing...');
+        
+        // Toggle mobile menu - FIXED
+        mobileMenu.addEventListener('click', function(e) {
+            e.stopPropagation();
+            console.log('Mobile menu clicked');
+            
+            // Toggle hamburger animation
+            mobileMenu.classList.toggle('is-active');
+            
+            // Toggle menu visibility
             navMenu.classList.toggle('active');
+            
+            // Toggle body scroll
+            if (navMenu.classList.contains('active')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
         });
 
-        // Close menu when clicking on navigation links
+        // Close menu when clicking on navigation links - FIXED
         navLinks.forEach(function(link) {
             link.addEventListener('click', function() {
-                mobileMenu.classList.remove('active');
+                console.log('Nav link clicked, closing menu');
+                mobileMenu.classList.remove('is-active');
                 navMenu.classList.remove('active');
+                document.body.style.overflow = 'auto';
             });
         });
 
-        // Close menu when clicking outside
+        // Close menu when clicking outside - FIXED
         document.addEventListener('click', function(e) {
-            if (!mobileMenu.contains(e.target) && !navMenu.contains(e.target)) {
-                mobileMenu.classList.remove('active');
+            const isClickInsideNav = navMenu.contains(e.target);
+            const isClickOnToggle = mobileMenu.contains(e.target);
+            
+            if (!isClickInsideNav && !isClickOnToggle && navMenu.classList.contains('active')) {
+                console.log('Clicked outside, closing menu');
+                mobileMenu.classList.remove('is-active');
                 navMenu.classList.remove('active');
+                document.body.style.overflow = 'auto';
             }
         });
 
-        // Close menu on window resize to desktop view
+        // Close menu on window resize to desktop view - FIXED
         window.addEventListener('resize', function() {
             if (window.innerWidth > 768) {
-                mobileMenu.classList.remove('active');
+                console.log('Resized to desktop, closing mobile menu');
+                mobileMenu.classList.remove('is-active');
                 navMenu.classList.remove('active');
+                document.body.style.overflow = 'auto';
             }
         });
+        
+        console.log('Mobile menu initialized successfully');
     } else {
-        console.warn('Mobile menu elements not found');
+        console.warn('Mobile menu elements not found:', { mobileMenu, navMenu });
     }
 }
 
@@ -99,8 +125,8 @@ function initSmoothScrolling() {
             const targetElement = document.getElementById(targetId);
             
             if (targetElement) {
-                const navHeight = document.querySelector('nav') ? document.querySelector('nav').offsetHeight : 0;
-                const offsetTop = targetElement.offsetTop - navHeight;
+                const navHeight = document.querySelector('nav') ? document.querySelector('nav').offsetHeight : 70;
+                const offsetTop = targetElement.offsetTop - navHeight - 20;
                 
                 window.scrollTo({
                     top: offsetTop,
@@ -214,6 +240,13 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Initialize all components with error handling
     try {
+        initMobileMenu();
+        console.log('Mobile menu initialized');
+    } catch (error) {
+        console.error('Error initializing mobile menu:', error);
+    }
+    
+    try {
         initSmoothScrolling();
         console.log('Smooth scrolling initialized');
     } catch (error) {
@@ -225,13 +258,6 @@ document.addEventListener('DOMContentLoaded', function() {
         console.log('Navbar scroll effect initialized');
     } catch (error) {
         console.error('Error initializing navbar scroll effect:', error);
-    }
-    
-    try {
-        initMobileMenu();
-        console.log('Mobile menu initialized');
-    } catch (error) {
-        console.error('Error initializing mobile menu:', error);
     }
     
     try {
