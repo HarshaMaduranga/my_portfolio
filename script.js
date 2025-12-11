@@ -32,7 +32,6 @@ function showMessage(type, text) {
         messageDiv.textContent = text;
         messageDiv.style.display = 'block';
         
-        // Hide message after 5 seconds
         setTimeout(() => {
             messageDiv.style.display = 'none';
         }, 5000);
@@ -45,28 +44,22 @@ function isValidEmail(email) {
     return emailRegex.test(email);
 }
 
-// Initialize mobile menu functionality - FIXED VERSION
+// Initialize mobile menu functionality
 function initMobileMenu() {
     const mobileMenu = document.getElementById('mobile-menu');
     const navMenu = document.getElementById('nav-menu');
     const navLinks = document.querySelectorAll('.nav-link');
 
-    // Check if elements exist before adding event listeners
     if (mobileMenu && navMenu) {
         console.log('Mobile menu elements found, initializing...');
         
-        // Toggle mobile menu - FIXED
         mobileMenu.addEventListener('click', function(e) {
             e.stopPropagation();
             console.log('Mobile menu clicked');
             
-            // Toggle hamburger animation
             mobileMenu.classList.toggle('is-active');
-            
-            // Toggle menu visibility
             navMenu.classList.toggle('active');
             
-            // Toggle body scroll
             if (navMenu.classList.contains('active')) {
                 document.body.style.overflow = 'hidden';
             } else {
@@ -74,7 +67,6 @@ function initMobileMenu() {
             }
         });
 
-        // Close menu when clicking on navigation links - FIXED
         navLinks.forEach(function(link) {
             link.addEventListener('click', function() {
                 console.log('Nav link clicked, closing menu');
@@ -84,7 +76,6 @@ function initMobileMenu() {
             });
         });
 
-        // Close menu when clicking outside - FIXED
         document.addEventListener('click', function(e) {
             const isClickInsideNav = navMenu.contains(e.target);
             const isClickOnToggle = mobileMenu.contains(e.target);
@@ -97,7 +88,6 @@ function initMobileMenu() {
             }
         });
 
-        // Close menu on window resize to desktop view - FIXED
         window.addEventListener('resize', function() {
             if (window.innerWidth > 768) {
                 console.log('Resized to desktop, closing mobile menu');
@@ -157,10 +147,69 @@ function initParticles() {
     const particles = document.querySelectorAll('.particle');
     
     particles.forEach(function(particle) {
-        // Randomize particle properties
         particle.style.left = Math.random() * 100 + '%';
         particle.style.animationDelay = Math.random() * 20 + 's';
         particle.style.animationDuration = (Math.random() * 10 + 15) + 's';
+    });
+}
+
+// Initialize skills animation
+function initSkillsAnimation() {
+    const techIcons = document.querySelectorAll('.tech-icon');
+    
+    if (techIcons.length === 0) return;
+
+    const observerOptions = {
+        threshold: 0.2,
+        rootMargin: '0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry, index) {
+            if (entry.isIntersecting) {
+                setTimeout(function() {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }, index * 50);
+                
+                observer.unobserve(entry.target);
+            }
+        });
+    }, observerOptions);
+
+    techIcons.forEach(function(icon) {
+        icon.style.opacity = '0';
+        icon.style.transform = 'translateY(30px)';
+        icon.style.transition = 'all 0.5s ease';
+        observer.observe(icon);
+    });
+}
+
+// Initialize timeline animation
+function initTimelineAnimation() {
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    
+    if (timelineItems.length === 0) return;
+
+    const observerOptions = {
+        threshold: 0.2,
+        rootMargin: '0px'
+    };
+
+    const observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+            if (entry.isIntersecting) {
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
+            }
+        });
+    }, observerOptions);
+
+    timelineItems.forEach(function(item) {
+        item.style.opacity = '0';
+        item.style.transform = 'translateY(30px)';
+        item.style.transition = 'all 0.6s ease';
+        observer.observe(item);
     });
 }
 
@@ -178,7 +227,6 @@ function initContactForm() {
                 submitBtn.textContent = 'Sending...';
             }
 
-            // Get form data
             const formData = new FormData(this);
             const templateParams = {
                 from_name: formData.get('from_name'),
@@ -188,28 +236,24 @@ function initContactForm() {
                 to_email: 'harshamaduranga435@gmail.com'
             };
 
-            // Validate form data
             if (!templateParams.from_name || !templateParams.from_email || !templateParams.subject || !templateParams.message) {
                 showMessage('error', '❌ Please fill in all fields.');
                 resetSubmitButton();
                 return;
             }
 
-            // Validate email format
             if (!isValidEmail(templateParams.from_email)) {
                 showMessage('error', '❌ Please enter a valid email address.');
                 resetSubmitButton();
                 return;
             }
 
-            // Check if EmailJS is available
             if (typeof emailjs === 'undefined') {
                 showMessage('error', '❌ Email service not available. Please try again later.');
                 resetSubmitButton();
                 return;
             }
 
-            // Send email using EmailJS
             emailjs.send(
                 emailJSConfig.serviceId,
                 emailJSConfig.templateId,
@@ -235,10 +279,8 @@ function initContactForm() {
 document.addEventListener('DOMContentLoaded', function() {
     console.log('DOM loaded, initializing website functionality...');
     
-    // Initialize EmailJS
     initEmailJS();
     
-    // Initialize all components with error handling
     try {
         initMobileMenu();
         console.log('Mobile menu initialized');
@@ -268,6 +310,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     try {
+        initSkillsAnimation();
+        console.log('Skills animation initialized');
+    } catch (error) {
+        console.error('Error initializing skills animation:', error);
+    }
+    
+    try {
+        initTimelineAnimation();
+        console.log('Timeline animation initialized');
+    } catch (error) {
+        console.error('Error initializing timeline animation:', error);
+    }
+    
+    try {
         initContactForm();
         console.log('Contact form initialized');
     } catch (error) {
@@ -277,24 +333,20 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('Website initialization complete!');
 });
 
-// Handle page visibility changes
 document.addEventListener('visibilitychange', function() {
     if (document.visibilityState === 'visible') {
         console.log('Page is visible');
     }
 });
 
-// Handle window load event
 window.addEventListener('load', function() {
     console.log('All resources loaded');
 });
 
-// Handle errors
 window.addEventListener('error', function(e) {
     console.error('JavaScript error:', e.error);
 });
 
-// Handle unhandled promise rejections
 window.addEventListener('unhandledrejection', function(e) {
     console.error('Unhandled promise rejection:', e.reason);
 });
