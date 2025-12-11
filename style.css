@@ -371,7 +371,7 @@ nav {
 
 .marquee-content {
     display: flex;
-    animation: scroll 30s linear infinite;
+    animation: scroll 20s linear infinite;
     white-space: nowrap;
 }
 
@@ -537,7 +537,6 @@ nav {
     border-radius: 20px;
     overflow: hidden;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
     transition: all 0.3s ease;
     margin: 0 auto;
 }
@@ -552,12 +551,16 @@ nav {
     height: 200px;
     object-fit: cover;
     display: block;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
 }
 
 .project-content {
     background-color: #000000;
     padding: 20px;
     color: #ffffff;
+    max-width: 90%;
+    margin: 0 auto;
 }
 
 .project-content h3 {
@@ -574,6 +577,8 @@ nav {
 
 .project-links {
     display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 1rem;
 }
 
